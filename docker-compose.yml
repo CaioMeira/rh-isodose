@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  python-api:
+    build: ./python-api
+    volumes:
+      - ./python-api:/var/
+    ports:
+      - "9999:9999"
+    command: "python3 app.py"
+    restart: always
+
+  react-api:
+    build: ./react-api
+    ports:
+      - "3000:3000"
+      - "5173:5173"
+    volumes:
+      # Monta a pasta local dentro do contêiner
+      - ./react-api:/app
+      - ./python-api:/var/
+      # Evita que o node_modules local sobrescreva o node_modules do contêiner
+      - /app/node_modules
+    environment:
+      # Para contêineres em Windows/Mac geralmente precisamos dessa variável
+      # para o hot reload funcionar corretamente, pois habilita o uso de polling.
+      CHOKIDAR_USEPOLLING: "true"
+    # Caso queira sobrescrever o CMD do Dockerfile, pode ser feito com:
+    command: ["yarn", "dev", "--host"]
+    stdin_open: true
+    restart: always
