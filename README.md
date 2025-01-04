@@ -133,7 +133,7 @@ react-api_1   |   ➜  Network: http://172.28.0.3:5173/
 ```
 
 - Para **acessar a aplicação**, abra o navegador em:  
-  `http://localhost:5173/`  
+  `http://xxxx:5173/`  onde xxx é Network fornecido no log
 
 - A porta padrão do Vite (usada pelo React) é **5173**.  
 - A **API Python** estará disponível em `http://localhost:9999/`.
