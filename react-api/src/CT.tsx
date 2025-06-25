@@ -6,8 +6,8 @@ import {
   type Types,
   volumeLoader,
   imageLoader,
-  setVolumesForViewports,
-  eventTarget,
+  setVolumesForViewports,                     //Não tem no Nifti
+  eventTarget,                                //Não tem no Nifti
 } from "@cornerstonejs/core"
 import { init as csRenderInit } from "@cornerstonejs/core"
 import {
@@ -45,9 +45,9 @@ function CT() {
       const renderingEngineId = "myRenderingEngine"
       const renderingEngine = new RenderingEngine(renderingEngineId)
 
-      const viewportId1 = "CT_NIFTI_AXIAL"
-      const viewportId2 = "CT_NIFTI_SAGITTAL"
-      const viewportId3 = "CT_NIFTI_CORONAL"
+      const viewportId1 = "CT_NIFTI_AXIAL"                          // Não tem no CT
+      const viewportId2 = "CT_NIFTI_SAGITTAL"                       // Não tem no CT
+      const viewportId3 = "CT_NIFTI_CORONAL"                        // Não tem no CT
 
       const viewportInputArray = [
         {

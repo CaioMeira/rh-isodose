@@ -3,10 +3,11 @@ services:
   python-api:
     build: ./python-api
     volumes:
-      - ./python-api:/var/
+      - ./python-api:/app/
+      - ./python-api/data/dcm:/var/data/dcm:ro
     ports:
       - "9999:9999"
-    command: "python3 app.py"
+    command: "python3 /app/app.py"
     restart: always
 
   react-api:

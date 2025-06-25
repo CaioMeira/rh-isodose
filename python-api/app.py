@@ -82,11 +82,39 @@ class API:
     @cherrypy.expose
     def contour(self, data=None):
         # pegando o path que vem via post ou get,
+        #
+
+        print("\n", "DATA RECEBIDO: ", data, "\n")
+
+
+        try: 
+            d = json.loads(data)
+            print("\n", "JsonLoads em D : ", d, "\n")
+
+            caminho_arquivo = d["path"]
+            print("\n", "Caminho do Arquivo : ", caminho_arquivo, "\n")
+            
+            ds = pydicom.dcmread(caminho_arquivo, force=True)
+            print("Arquivo lido com Sucesso")
+            print("Modality:", ds.get("Modality", "Não Encontrado"))
+            dicom = dicomparser.DicomParser(ds)
+            info = dicom.GetSeriesInfo()
+
+            if info["modality"] == "RTSTRUCT":
+                    rtstructs.append(dicom)
+                    print(rtstructs)
+            else:
+                print("not rtstruct")
+
+
+        except Exception as e:
+            print(f"Erroooo ao abrir o arquivo {data}: {e}")
+
+
+
         if data:
             d = json.loads(data)
             rtstructs = []
-            rtdoses = []
-            images = {}
             for key, value in d.items():
                 # Lê o Arquivo e Extrai o Dicom
                 dicom = dicomparser.DicomParser(value)
@@ -94,31 +122,71 @@ class API:
 
                 if info["modality"] == "RTSTRUCT":
                     rtstructs.append(dicom)
-                elif info["modality"] == "CT":
-                    images[dicom.ds.SOPInstanceUID] = dicom
-                elif info["modality"] == "RTDOSE":
-                    rtdoses.append(dicom)
-            
-            if len(rtstructs) == 0 or len(images) == 0:
-                raise Exception("No RTStruct or CT images found")
 
-            rtdose = rtdoses[0] if len(rtdoses) > 0 else None
-            calc = Estrutura(rtstructs[0], rtdose, images)
-            ret = calc.contour()
+            calc = Estrutura(rtstructs[0], None, None)
+            ret = calc.structures()
             return json.dumps(ret, cls=NumpyEncoder)
         else:
-            return "Envie as Informações Via POST ou GET"
+            return "Envie as Informações Via POST ou GET (Contour)"
+
+        # #
+        # if data:
+        #     d = json.loads(data)
+        #     for key, value in d.items():
+        #         try:
+        #             print(f"Tentando abrir {value}")
+        #             dicom = dicomparser.DicomParser(value)
+        #             info = dicom.GetSeriesInfo()
+        #             print(f"Arquivo OK: {info['modality']}")
+        #             # processa normalmente...
+        #         except Exception as e:
+        #             print(f"❌ Erro ao abrir {value}: {e}")
+        #             return f"Erro ao abrir {value}: {e}"
+        #     rtstructs = []
+        #     rtdoses = []
+        #     images = {}
+        #     for key, value in d.items():
+        #         # Lê o Arquivo e Extrai o Dicom
+        #         dicom = dicomparser.DicomParser(value)
+        #         info = dicom.GetSeriesInfo()
+
+        #         if info["modality"] == "RTSTRUCT":
+        #             rtstructs.append(dicom)
+        #         elif info["modality"] == "CT":
+        #             images[dicom.ds.SOPInstanceUID] = dicom
+        #         elif info["modality"] == "RTDOSE":
+        #             rtdoses.append(dicom)
+            
+        #     if len(rtstructs) == 0 or len(images) == 0:
+        #         raise Exception("No RTStruct or CT images found")
+
+        #     rtdose = rtdoses[0] if len(rtdoses) > 0 else None
+        #     calc = Estrutura(rtstructs[0], rtdose, images)
+        #     ret = calc.contour()
+        #     return json.dumps(ret, cls=NumpyEncoder)
+        # else:
+        #     return "Envie as Informações Via POST ou GET (contour)"
 
     @cherrypy.expose
     def isodose(self, data=None):
         # pegando o path que vem via post ou get,
+
+        print("\n============================ INCIO DE OPERAÇÃO DE ISODOSE =================================\n")
         if data:
             d = json.loads(data)
+            print("\n")
+           # print("\n PRINTANDO d: ", d, "\n")
+            print("\n")
             rtdoses = []
             for key, value in d['files'].items():
+                print("\n===================== INCIO DO LOOP ===========================\n")
+                print(d['files'].items())
                 # Lê o Arquivo e Extrai o Dicom
                 dicom = dicomparser.DicomParser(value)
                 info = dicom.GetSeriesInfo()
+                print("\n")
+                print("\n PRINTANDO INFO:", key , "info: ", info, "\n")
+                print("\n")
 
                 # and 'GridFrameOffsetVector' in dicom.ds:
                 if info["modality"] == "RTDOSE":
@@ -132,7 +200,7 @@ class API:
             ret = calc.default_isodoses()
             return json.dumps(ret, cls=NumpyEncoder)
         else:
-            return "Envie as Informações Via POST ou GET"
+            return "Envie as Informações Via POST ou GET (isodose)"
 
    
 if __name__ == '__main__':

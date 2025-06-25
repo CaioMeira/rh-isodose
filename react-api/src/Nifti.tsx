@@ -27,7 +27,7 @@ function Nifti() {
 
       await csRenderInit()
 
-      const viewportId1 = "CT_NIFTI_AXIAL"
+      const viewportId1 = "CT_NIFTI_AXIAL"     //não tem no CT
 
       const niftiURL =
         "https://ohif-assets.s3.us-east-2.amazonaws.com/nifti/CTACardio.nii.gz"

@@ -25,6 +25,11 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 RUN pip install -U setuptools pip
 
+# Caio's changes ======
+ RUN pip install cherrypy
+ RUN pip install cherrypy_cors
+# RUN pip install debugpy
+# ======================
 
 EXPOSE 9999 
 
